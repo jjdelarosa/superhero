@@ -1,72 +1,72 @@
 <template>
-  <div>
+<div>
     <label class="block px-2 pt-1 md:px-16 md:pt-8">
       <input
-        :value="searchItem"
         type="text"
         class="form-input mt-1 block w-full"
-        placeholder="Search a Superhero, example: Thor"
-        @change="setSearchItem"
+        placeholder="Search a NBA Player"
+        @change="search"
       />
     </label>
-    <div class="flex flex-col flex-wrap justify-center items-center">
-      <PacmanLoader v-if="loading" class="mt-4" color="#38B2AC" size="2em" />
-      <h1
-        v-if="searchItem"
-        class="w-full text-center px-4 md:px-16 text-teal-200 font-semibold text-3xl md:text-4xl lg:text-5xl xl:text-6xl"
-      >
-        <span class="font-hairline">Showing results for</span> "{{
-          searchItem
-        }}"
-      </h1>
-      <div v-if="notFound">
-        <img :src="notFoundImage" alt="not found" />
-      </div>
-      <div v-if="searchItem && heroes.length > 0" class="w-full flex flex-wrap">
-        <Card
-          class="sm:w-1/2 lg:w-1/3 xl:w-1/4 p-2"
-          v-for="hero in heroes"
-          :key="hero.id"
-          :hero="hero"
-        />
-      </div>
+    <br />
+    <div class="flex flex-col flex-warp justify-center items-center">
+      <table class="border px-4 py-2 font-semibold">
+        <tr>
+          <td class="border px-4 py-2">First Name</td>
+          <td class="border px-4 py-2">Last Name</td>
+          <td class="border px-4 py-2">Height Feet</td>
+          <td class="border px-4 py-2">Height Inches</td>
+          <td class="border px-4 py-2">Weight In Pounds</td>
+        </tr>
+        <tr v-for="nba in player" v-bind:key="nba.id">
+          <td class="border px-4 py-2">{{ nba.first_name }}</td>
+          <td class="border px-4 py-2">{{ nba.last_name }}</td>
+          <td class="border px-4 py-2">{{ nba.height_feet }}</td>
+          <td class="border px-4 py-2">{{ nba.height_inches }}</td>
+          <td class="border px-4 py-2">{{ nba.weight_pounds }}</td>
+          <td class="border px-4 py-2">
+            <a href="">
+              View
+            </a>
+          <td class="border px-4 py-2">
+            <button @click="deleteRow(nba.id)">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </table>
     </div>
-  </div>
+</div>
 </template>
-
 <script>
-import PacmanLoader from 'vue-spinner/src/PacmanLoader.vue'
-import Card from '@/components/Card.vue'
-import notFoundImage from '../assets/notFound.gif'
+import axios from 'axios'
 export default {
-  name: 'Home',
-  components: {
-    Card,
-    PacmanLoader,
-  },
+  name: 'nba',
   data() {
     return {
-      notFoundImage,
-    }
-  },
-  computed: {
-    searchItem() {
-      return this.$store.getters.getSearchItem
-    },
-    heroes() {
-      return this.$store.getters.getHeroes
-    },
-    loading() {
-      return this.$store.getters.isLoading
-    },
-    notFound() {
-      return this.$store.getters.getNotFound
-    },
+      search: '',
+      player: undefined}
   },
   methods: {
-    setSearchItem(event) {
-      this.$store.dispatch('setSearchItem', event.target.value)
+
+    getNBA() 
+    {
+    axios
+      .get('https://free-nba.p.rapidapi.com/players', {
+        headers: {
+          'x-rapidapi-key':
+            '82525bb0afmsh4e9d274028f4857p1ecaafjsn99e87f447a64',
+        },
+      })
+      .then(resp => {
+        this.player = resp.data.data
+        console.warn(resp.data.data)
+      })
     },
+
+  },
+  mounted() {
+    this.getNBA()
   },
 }
 </script>
